@@ -55,9 +55,6 @@ const mainMenu = async () => {
             console.log('Goodbye!');
             return; // Exit the program
     }
-
-    // Return to main menu
-    mainMenu();
 };
 
 // Helper function to execute a query and log the results
@@ -91,11 +88,13 @@ const viewAllEmployees = async () => {
     const rows = await executeQuery(query);
     console.table(rows);
 
-    mainMenu(); // Return to the main menu after displaying data
+    return mainMenu(); // Return to the main menu after displaying data
 };
 
-// Functions for other actions
+// Function to add an employee
 const addEmployee = async () => {
+    console.log("addEmployee function called"); // Debug log
+
     const roles = await executeQuery('SELECT role_id, role_title FROM role');
     const roleChoices = roles.map(role => ({ name: role.role_title, value: role.role_id }));
 
@@ -128,9 +127,12 @@ const addEmployee = async () => {
         }
     ]);
 
+    console.log("Inquirer prompt answers:", answers); // Debug log
+
     await executeQuery('INSERT INTO employee (employee_first_name, employee_last_name, employee_role_id, manager_id) VALUES ($1, $2, $3, $4)', [answers.first_name, answers.last_name, answers.role_id, answers.manager_id]);
     console.log(`Added ${answers.first_name} ${answers.last_name} to the database`);
-    mainMenu();
+    
+    return mainMenu();
 };
 
 const updateEmployeeRole = async () => {
@@ -157,13 +159,15 @@ const updateEmployeeRole = async () => {
 
     await executeQuery('UPDATE employee SET employee_role_id = $1 WHERE employee_id = $2', [answers.role_id, answers.employee_id]);
     console.log(`Updated employee's role`);
-    mainMenu();
+    
+    return mainMenu();
 };
 
 const viewAllRoles = async () => {
     const rows = await executeQuery('SELECT * FROM role');
     console.table(rows);
-    mainMenu(); // Return to the main menu after displaying data
+    
+    return mainMenu(); // Return to the main menu after displaying data
 };
 
 const addRole = async () => {
@@ -191,13 +195,15 @@ const addRole = async () => {
 
     await executeQuery('INSERT INTO role (role_title, role_salary, role_department) VALUES ($1, $2, $3)', [answers.role_title, answers.role_salary, answers.role_department]);
     console.log(`Added role ${answers.role_title} to the database`);
-    mainMenu();
+    
+    return mainMenu();
 };
 
 const viewAllDepartments = async () => {
     const rows = await executeQuery('SELECT * FROM department');
     console.table(rows);
-    mainMenu(); // Return to the main menu after displaying data
+    
+    return mainMenu(); // Return to the main menu after displaying data
 };
 
 const addDepartment = async () => {
@@ -211,7 +217,8 @@ const addDepartment = async () => {
 
     await executeQuery('INSERT INTO department (name) VALUES ($1)', [name]);
     console.log(`Added department ${name} to the database`);
-    mainMenu();
+    
+    return mainMenu();
 };
 
 // Start the application
